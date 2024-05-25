@@ -97,7 +97,7 @@ def parse_identifier(tree: Node, lexemes: List[str]) -> bool:
     if pos >= len(lexemes):
         return False
 
-    if lexemes[pos].isalpha() and lexemes[pos] not in ['begin', 'end', 'div', 'mod', 'end', 'or', 'not']:
+    if lexemes[pos].isalpha() and lexemes[pos] not in ['begin', 'end', 'div', 'mod', 'and', 'or', 'not']:
         new_node = Node("\<идентификатор\>")
         new_node.children.append(Node(lexemes[pos]))
         tree.children.append(new_node)
@@ -258,8 +258,8 @@ def parse_operator_list_stroke(tree: Node, lexemes: List[str]) -> bool:
         return True"""
 
     new_node = Node("\<список операторов’\>")
-    if parse_lex(new_node, lexemes, ';'):
-        if parse_operator(new_node, lexemes):
+    if parse_operator(new_node, lexemes):
+        if parse_lex(new_node, lexemes, ';'):
             if parse_operator_list_stroke(new_node, lexemes):
                 tree.children.append(new_node)
                 return True
@@ -277,9 +277,10 @@ def parse_operator_list(tree: Node, lexemes: List[str]) -> bool:
 
     new_node = Node("\<список операторов\>")
     if parse_operator(new_node, lexemes):
-        if parse_operator_list_stroke(new_node, lexemes):
-            tree.children.append(new_node)
-            return True
+        if parse_lex(new_node, lexemes, ';'):
+            if parse_operator_list_stroke(new_node, lexemes):
+                tree.children.append(new_node)
+                return True
 
     return False
 
